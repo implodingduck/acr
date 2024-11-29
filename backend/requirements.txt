@@ -1,6 +1,6 @@
 django
 gunicorn==22.0.0
 psycopg2
-djangorestframework
-djangorestframework-simplejwt
+python-keycloak
 django-cors-headers
+django-ninja

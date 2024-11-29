@@ -13,6 +13,24 @@ services:
     ports:
       - 5432:5432
 
+
+# docker run -p 8080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:26.0.5 start-dev
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.5
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://acr-db-1/keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: 
+      - 8080:8080
+    depends_on:
+      - db
+
+
   backend: 
     build: ./backend
     ports: 
@@ -20,3 +38,13 @@ services:
     environment:
       POSTGRES_HOST: acr-db-1
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_ENDPOINT: ${KC_ENDPOINT}
+      KC_REALM: ${KC_REALM}
+      KC_CLIENT_ID: ${KC_CLIENT_ID}
+      KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
+    volumes:
+    - ./backend:/code
+    depends_on:
+      - db
+      - keycloak
+
